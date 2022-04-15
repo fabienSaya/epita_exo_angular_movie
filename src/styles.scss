@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+/*
+après avoir installé bootstrap via la console et npm: npm i bootstrap
+On ajoute bootstrap : le ~ veut dire nodemodules/ . En effet, après l'install on voit qu'il y a le répertoire dans le répertoire node_modules donc on peut le référencer. Faire un refresh si on le voit pas.*/
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+/* par défaut on veut que le background soit noir et le texte blanc. On le met au niveau du body du coup*/
+body {
+  background: black;
+  color: white;
+}
+
+
