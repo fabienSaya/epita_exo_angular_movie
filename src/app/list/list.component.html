@@ -1,1 +1,11 @@
-<p>list works!</p>
+<div class="row">
+  <div *ngFor="let movie of movies;let i=index" class="col-12 col-lg-2">
+    <!-- CARD -->
+    <div class="card">
+      <img [src]="getImageUrl(movie.backdrop_path)" alt="">
+      <div  class="card-body">
+        <h2 >{{movie.title}}</h2>
+      </div>
+    </div>
+  </div>
+</div>
