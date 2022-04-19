@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import { MovieModel } from '../models/movie.model';
+
 
 @Injectable({
   providedIn: 'root'
@@ -40,9 +42,20 @@ export class MovieService {
   */
   public getMoviesFromApi() {
     //next push la réponse dans movies$
-    this.http.get(this._url).subscribe(
-      (response:any) => this._movies$.next(response.results)
-    )
+    //on ne type pas l'apiResponse car potentiellement, le json pourrait avoir des propriétés en plus, et on veut pas péter si on les utilises pas
+    this.http.get(this._url)
+      .pipe(//on va convertir ici le tableau de apiResponse.results en tableau un tableau de MovieModel
+          map( (apiResponse:any) =>
+            apiResponse.results.map((movieFromApi:any) => new MovieModel(movieFromApi))
+          )
+        )//le pipe retourne un observable (sur lequel on peut subscribe)
+      .subscribe(
+        (response:any) => {
+          console.log('movie chargés=',response)
+          this._movies$.next(response)
+
+        }
+      )
   }
 
   /* faire une requete HTTP à l'API theMovieDB (sur la page suivante)
@@ -54,22 +67,22 @@ export class MovieService {
     let urlNextPage=this._url+'&page='+this._currentPage;
 
     /* pour que le code soit synchrone il faut qu'il soit dans le subscribe  */
-    this.http.get(urlNextPage).subscribe((response:any) => {
-
+    this.http.get(urlNextPage)
+    .pipe(//on va convertir ici le tableau de apiResponse.results en tableau un tableau de MovieModel
+          map( (apiResponse:any) =>
+            apiResponse.results.map((movieFromApi:any) => new MovieModel(movieFromApi))
+          )
+        )//le pipe retourne un observable (sur lequel on peut subscribe)
+    .subscribe((response:any) => {
       //il faut mettre les ... pour les 2 tableaux car on copie le contenu leur contenu
-      let allMovies=[...this._movies$.getValue(),...response.results];
+      let allMovies=[...this._movies$.getValue(),...response];
 
-      //console.log("allMovies: "+allMovies);
+      //console.log("allMovies: ",allMovies);
 
       //on remet la liste complete dans le flux
       this._movies$.next(allMovies);
 
       //console.log(this._movies$.getValue()); -> permet de voir vraiment ce qu'il y a dans le flux retourné
     });
-
-
   }
-
-
-
 }
