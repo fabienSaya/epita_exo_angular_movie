@@ -23,7 +23,7 @@ export class MovieService {
   constructor(private http:HttpClient) { }
 
   //on crée un getter pour encapsuler le subject et retourner uniquement l'observable
-  public get movies$()  {
+  public get movies$() : Observable<any>  {
     return this._movies$.asObservable();
   }
 
@@ -65,8 +65,6 @@ export class MovieService {
       this._movies$.next(allMovies);
 
       //console.log(this._movies$.getValue()); -> permet de voir vraiment ce qu'il y a dans le flux retourné
-
-
     });
 
 
