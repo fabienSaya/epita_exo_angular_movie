@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { MovieModel } from '../models/movie.model';
 
 
@@ -10,7 +11,12 @@ import { MovieModel } from '../models/movie.model';
 export class MovieService {
 
   //private _url:string ="https://api.themoviedb.org/3/discover/movie?api_key=d8cc8cac11048db08e0fdd11acbf66c1&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate";
-  private _url:string ="https://api.themoviedb.org/3/discover/movie?api_key=d8cc8cac11048db08e0fdd11acbf66c1";
+  //TMDB=the movie db
+  private _TMDB_API_URL=environment.apiTMdb;
+  private _TMDB_API_KEY=environment.apiKeyTmdb;
+  private _ENDPOINT_DISCOVER_MOVIE=this._TMDB_API_URL+'/discover/movie?api_key='+this._TMDB_API_KEY;
+
+  //private _url:string ="https://api.themoviedb.org/3/discover/movie?api_key=d8cc8cac11048db08e0fdd11acbf66c1";
 
 
   private _currentPage:number = 1
@@ -43,7 +49,7 @@ export class MovieService {
   public getMoviesFromApi() {
     //next push la réponse dans movies$
     //on ne type pas l'apiResponse car potentiellement, le json pourrait avoir des propriétés en plus, et on veut pas péter si on les utilises pas
-    this.http.get(this._url)
+    this.http.get(this._ENDPOINT_DISCOVER_MOVIE)
       .pipe(//on va convertir ici le tableau de "apiResponse.results" en tableau un tableau de MovieModel. On est obligé de faire 2 map car le results est un sous objet du premier objet reponse
           map( (apiResponse:any) =>
             apiResponse.results.map((movieFromApi:any) => new MovieModel(movieFromApi))
@@ -64,7 +70,7 @@ export class MovieService {
   */
   public getNextMoviesFromApi() {
     this._currentPage+=1;
-    let urlNextPage=this._url+'&page='+this._currentPage;
+    let urlNextPage=this._ENDPOINT_DISCOVER_MOVIE+'&page='+this._currentPage;
 
     /* pour que le code soit synchrone il faut qu'il soit dans le subscribe  */
     this.http.get(urlNextPage)
@@ -84,5 +90,9 @@ export class MovieService {
 
       //console.log(this._movies$.getValue()); -> permet de voir vraiment ce qu'il y a dans le flux retourné
     });
+  }
+
+  public getVideosOfMovie() {
+
   }
 }
