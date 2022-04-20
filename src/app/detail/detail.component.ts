@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { MovieModel } from '../models/movie.model';
 import { MovieService } from '../services/movie.service';
 
 @Component({
@@ -15,7 +16,7 @@ export class DetailComponent implements OnInit {
   movieVideo:any;
   //movie:any;
 
-  //subscription:Subscription = new Subscription(); -> CA ne sert plus à rien, car on va gérer les subscription dans la vue (le html)
+  subscription:Subscription = new Subscription();
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -40,13 +41,33 @@ export class DetailComponent implements OnInit {
         );
 
 
-    // on ne le fait plus dans le ts, mais directement dans la vue. Plus besoin de ca
+
+
+    // on ne fait plus le subscribe dans le ts, mais directement dans la vue. Plus besoin de ca
     //on subscribe au movie$ pour avoir le movie
     // this.subscription = this.movieSvc.movie$.subscribe(data => {
     //     console.log('movie selectionné: ',data)
     //     this.movie=data
     //   }
     // )
+
+
+    // --> Si on devait gérer le cas où on accede directement à la liste
+    // exemple
+    // this.subscription = this.movieSvc.movie$.subscribe(data => {
+    //       if (data==undefined || data==null) {}
+    //         //on fait une requete via le service pour le récupérer.
+    //         this.movieSvc.getMovie(this.movieId)
+    //       }
+    //     )
+
+    this.subscription =  this.movieSvc.movie$.subscribe(
+      (data:MovieModel) => {
+        if(data == undefined  || data == null) {
+          this.movieSvc.getMovieFromApi(this.movieId);
+        }
+      }
+    )
   }
 
   getVideoUrl(videoKey:string) {
@@ -55,11 +76,8 @@ export class DetailComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  // on ne le fait plus dans le ts, mais directement dans la vue. Plus besoin de ca
-  // ngOnDestroy() {
-  //   this.subscription.unsubscribe()
-  // }
-
-
-
+  //on ne le fait plus dans le ts, mais directement dans la vue. Plus besoin de ca
+  ngOnDestroy() {
+    // this.subscription.unsubscribe()
+  }
 }

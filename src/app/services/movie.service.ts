@@ -107,6 +107,25 @@ export class MovieService {
     return this.http.get(this._TMDB_API_URL+'/movie/'+movieId+'/videos?api_key='+this._TMDB_API_KEY+'&language=fr')
   }
 
+  public getMovieFromApi(movieId:number) {
+    this.http.get(this._TMDB_API_URL +'/movie/'+movieId+'?api_key='+this._TMDB_API_KEY+'&language=fr')
+    .pipe(
+       // avec l'opérateur map de RxJS,
+       // on va mapper la reponse de l'API TMDB
+       map( (apiResponse:any) =>
+         new MovieModel(apiResponse)
+       )
+     ) // fin pipe() retourne un Observable
+    .subscribe(
+      (response:MovieModel) => {
+        console.log(response)
+        this._movie$.next(response)
+       }
+    )
+
+  }
+
+
   setMovie(movie:MovieModel) {
     this._movie$.next(movie)
   }
