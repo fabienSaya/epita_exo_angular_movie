@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { MovieModel } from '../models/movie.model';
 
@@ -14,7 +14,8 @@ export class MovieService {
   //TMDB=the movie db
   private _TMDB_API_URL=environment.apiTMdb;
   private _TMDB_API_KEY=environment.apiKeyTmdb;
-  private _ENDPOINT_DISCOVER_MOVIE=this._TMDB_API_URL+'/discover/movie?api_key='+this._TMDB_API_KEY;
+  private _ENDPOINT_DISCOVER_MOVIES=this._TMDB_API_URL+'/discover/movie?api_key='+this._TMDB_API_KEY+"&language=fr";
+
 
   //private _url:string ="https://api.themoviedb.org/3/discover/movie?api_key=d8cc8cac11048db08e0fdd11acbf66c1";
 
@@ -25,7 +26,15 @@ export class MovieService {
     - on peut s'abonner à cette source via la méthode .subscribe()
     - on peut pousser une nouvelle donnéevia la methode next
   */
-  private _movies$:BehaviorSubject<any> = new BehaviorSubject<any>([])
+  private _movies$:BehaviorSubject<MovieModel[]> = new BehaviorSubject<MovieModel[]>([])
+
+  //contiendra le movie sélectionné pour le détail.
+  //L'idée est que le movie soit accessible dans le service par tous les composants et puisse la consommer ou la mettre à jour
+  //private _movie$:BehaviorSubject<MovieModel> = new BehaviorSubject<MovieModel>(null!) //si je met pas any mais MovieModel, il faudra que j'initialise l'objet en parametre avec des valeurs par defaut
+
+  private _movie$:BehaviorSubject<MovieModel> = new BehaviorSubject<MovieModel>(null!)
+
+
 
   /* injection d'un objet http de la classe HttpClient */
   constructor(private http:HttpClient) { }
@@ -49,7 +58,7 @@ export class MovieService {
   public getMoviesFromApi() {
     //next push la réponse dans movies$
     //on ne type pas l'apiResponse car potentiellement, le json pourrait avoir des propriétés en plus, et on veut pas péter si on les utilises pas
-    this.http.get(this._ENDPOINT_DISCOVER_MOVIE)
+    this.http.get(this._ENDPOINT_DISCOVER_MOVIES)
       .pipe(//on va convertir ici le tableau de "apiResponse.results" en tableau un tableau de MovieModel. On est obligé de faire 2 map car le results est un sous objet du premier objet reponse
           map( (apiResponse:any) =>
             apiResponse.results.map((movieFromApi:any) => new MovieModel(movieFromApi))
@@ -70,7 +79,7 @@ export class MovieService {
   */
   public getNextMoviesFromApi() {
     this._currentPage+=1;
-    let urlNextPage=this._ENDPOINT_DISCOVER_MOVIE+'&page='+this._currentPage;
+    let urlNextPage=this._ENDPOINT_DISCOVER_MOVIES+'&page='+this._currentPage;
 
     /* pour que le code soit synchrone il faut qu'il soit dans le subscribe  */
     this.http.get(urlNextPage)
@@ -92,7 +101,17 @@ export class MovieService {
     });
   }
 
-  public getVideosOfMovie() {
+  /* là on ne crée pas de subject (comme movie$) car la liste des videos ne va pas évolué dynamiquement. On a juste besoin d'executer la requete.
+  La requete sera exécuté par celui qui fera le subscribe. Et c'est lui qui écrira la call back (la gestion de la réponse)*/
+  public getVideosOfMovie(movieId:number) :Observable<any>{
+    return this.http.get(this._TMDB_API_URL+'/movie/'+movieId+'/videos?api_key='+this._TMDB_API_KEY+'&language=fr')
+  }
 
+  setMovie(movie:MovieModel) {
+    this._movie$.next(movie)
+  }
+
+  get movie$() {
+    return this._movie$.asObservable();
   }
 }

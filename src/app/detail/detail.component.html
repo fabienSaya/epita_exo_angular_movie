@@ -1,1 +1,20 @@
-<p>detail works! {{movieId}}</p>
+<!--<pre>{{movieVideo|json}}</pre>-->
+
+<!-- le *ngIf permet nous assurer qu'on a bien l'objet avant d'afficher. Si on le met pas il essaye d'afficher
+avant qu'on ait récupéré movieVideo et on a des erreurs sur l'utilisation des propriétés
+
+- on épure un peu ce qu'on a récupéré de la génération d'iframe par youtube.
+- Sur l'iframe on applique le ratio 16/9 de la taille récupérée depuis l'api
+- et on met l'iframe dans un container sur lequel on applique un css récupéré sur internet
+   pour que ca occupe toute la largeur et que ce soit responsive .
+-->
+
+<div class="video-container">
+  <iframe *ngIf="movieVideo" [width]="16/9*movieVideo.size" [height]="movieVideo.size"
+    [src]="getVideoUrl(movieVideo.key)"
+    frameborder="0"
+    allowfullscreen></iframe>
+</div>
+
+<div></div>
+<p>{{(movieSvc.movie$ | async )?.description}}</p>

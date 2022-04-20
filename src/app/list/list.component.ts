@@ -43,4 +43,9 @@ export class ListComponent implements OnInit {
     this.movieSvc.getNextMoviesFromApi();
   }
 
+  navToDetail(movie:MovieModel) {
+    this.movieSvc.setMovie(movie);
+
+  }
+
 }
