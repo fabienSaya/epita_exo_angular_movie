@@ -27,9 +27,23 @@ export class ListComponent implements OnInit {
 
     //on va plutot passer par un service pour récupérer les films
     //je dit au service de charger
-    this.movieSvc.getMoviesFromApi();
+  //  this.movieSvc.getMoviesFromApi();
     //je m'abonne à la source de la donnée
-    this.movieSvc.movies$.subscribe((moviesFromService:any)=> this.movies=moviesFromService);
+  //  this.movieSvc.movies$.subscribe((moviesFromService:any)=> this.movies=moviesFromService);
+
+    //Pour évite qu'il fasse une requete à chaque fois qu'on fait back vers la liste. Donc qu'il fasse
+    //une requete au back inutile si on a déjà la liste, on fait:
+    //- on souscrit au subject
+    //- s'il y a pas de film, on lance la requete
+    //- s'il y a des films, on les assigne
+
+    this.movieSvc.movies$.subscribe((data:any) => {
+      if (data.length==0) {
+        this.movieSvc.getMoviesFromApi();
+      } else {
+        this.movies=data;
+      }
+    })
 
   }
 

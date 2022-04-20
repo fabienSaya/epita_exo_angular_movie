@@ -52,16 +52,8 @@ export class DetailComponent implements OnInit {
     // )
 
 
-    // --> Si on devait gérer le cas où on accede directement à la liste
-    // exemple
-    // this.subscription = this.movieSvc.movie$.subscribe(data => {
-    //       if (data==undefined || data==null) {}
-    //         //on fait une requete via le service pour le récupérer.
-    //         this.movieSvc.getMovie(this.movieId)
-    //       }
-    //     )
-
-    this.subscription =  this.movieSvc.movie$.subscribe(
+      // gestion du le cas où on accede directement au movie sans passer par la liste. Dans ce cas, data est vide, il faut donc faire la requete à movie
+       this.subscription =  this.movieSvc.movie$.subscribe(
       (data:MovieModel) => {
         if(data == undefined  || data == null) {
           this.movieSvc.getMovieFromApi(this.movieId);
