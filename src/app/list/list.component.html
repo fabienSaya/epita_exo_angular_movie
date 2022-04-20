@@ -1,5 +1,5 @@
 <div class="row pb-5">
-  <div *ngFor="let movie of movies;let i=index" class="col-12 col-lg-2">
+  <div *ngFor="let movie of movieSvc.movies$ | async;let i=index" class="col-12 col-lg-2">
     <!-- CARD -->
     <!-- router link sert pour le routage-->
     <div (click)="navToDetail(movie)" [routerLink]="['details',movie.id]" class="card">

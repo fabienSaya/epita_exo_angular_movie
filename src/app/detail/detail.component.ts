@@ -13,13 +13,13 @@ export class DetailComponent implements OnInit {
 
   movieId:number=0;
   movieVideo:any;
-  movie:any;
+  //movie:any;
 
-  subscription:Subscription = new Subscription();
+  //subscription:Subscription = new Subscription(); -> CA ne sert plus à rien, car on va gérer les subscription dans la vue (le html)
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    public movieSvc: MovieService,
+    public movieSvc: MovieService,//on le met public pour pouvoir y acceder dans le html pour la gestion de la subscription en async
     private sanitizer:DomSanitizer
     ) { }
 
@@ -39,6 +39,8 @@ export class DetailComponent implements OnInit {
           }
         );
 
+
+    // on ne le fait plus dans le ts, mais directement dans la vue. Plus besoin de ca
     //on subscribe au movie$ pour avoir le movie
     // this.subscription = this.movieSvc.movie$.subscribe(data => {
     //     console.log('movie selectionné: ',data)
@@ -53,6 +55,7 @@ export class DetailComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
+  // on ne le fait plus dans le ts, mais directement dans la vue. Plus besoin de ca
   // ngOnDestroy() {
   //   this.subscription.unsubscribe()
   // }

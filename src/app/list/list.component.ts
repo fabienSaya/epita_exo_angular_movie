@@ -18,7 +18,7 @@ export class ListComponent implements OnInit {
   /* injection d'un objet http de la classe HttpClient */
   //constructor(private http:HttpClient) { }
   /*injection du service movie */
-  constructor(private movieSvc:MovieService) { }
+  constructor(public movieSvc:MovieService) { }
 
 
   ngOnInit(): void {

@@ -16,5 +16,8 @@ avant qu'on ait récupéré movieVideo et on a des erreurs sur l'utilisation des
     allowfullscreen></iframe>
 </div>
 
-<div></div>
-<p>{{(movieSvc.movie$ | async )?.description}}</p>
+<div *ngIf="movieSvc.movie$ | async as movie">
+  <h1>{{movie.titre | uppercase}}</h1>
+  <p>{{movie.description}}</p>
+  <p>{{movie.date | date:'dd/MM/YYYY'}}</p>
+</div>
