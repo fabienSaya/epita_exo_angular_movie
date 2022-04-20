@@ -19,7 +19,7 @@ export class MovieService {
     - on peut s'abonner à cette source via la méthode .subscribe()
     - on peut pousser une nouvelle donnéevia la methode next
   */
-  private _movies$:BehaviorSubject<any> = new BehaviorSubject([])
+  private _movies$:BehaviorSubject<any> = new BehaviorSubject<any>([])
 
   /* injection d'un objet http de la classe HttpClient */
   constructor(private http:HttpClient) { }
@@ -44,13 +44,13 @@ export class MovieService {
     //next push la réponse dans movies$
     //on ne type pas l'apiResponse car potentiellement, le json pourrait avoir des propriétés en plus, et on veut pas péter si on les utilises pas
     this.http.get(this._url)
-      .pipe(//on va convertir ici le tableau de apiResponse.results en tableau un tableau de MovieModel
+      .pipe(//on va convertir ici le tableau de "apiResponse.results" en tableau un tableau de MovieModel. On est obligé de faire 2 map car le results est un sous objet du premier objet reponse
           map( (apiResponse:any) =>
             apiResponse.results.map((movieFromApi:any) => new MovieModel(movieFromApi))
           )
-        )//le pipe retourne un observable (sur lequel on peut subscribe)
+        )//le pipe retourne un observable dont le resultat est un tableau de movie(sur lequel on peut subscribe)
       .subscribe(
-        (response:any) => {
+        (response:Array<MovieModel>) => {
           console.log('movie chargés=',response)
           this._movies$.next(response)
 
@@ -73,7 +73,7 @@ export class MovieService {
             apiResponse.results.map((movieFromApi:any) => new MovieModel(movieFromApi))
           )
         )//le pipe retourne un observable (sur lequel on peut subscribe)
-    .subscribe((response:any) => {
+    .subscribe((response:Array<MovieModel>) => {
       //il faut mettre les ... pour les 2 tableaux car on copie le contenu leur contenu
       let allMovies=[...this._movies$.getValue(),...response];
 

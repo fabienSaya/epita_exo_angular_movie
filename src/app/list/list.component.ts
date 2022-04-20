@@ -33,13 +33,13 @@ export class ListComponent implements OnInit {
 
   }
 
-  getImageUrl(backdrop_path:string | null ) {
+  getImageUrl(backdrop_path:string | null ): string {
     return (backdrop_path!=null && backdrop_path!='') ?
       this.url_base_image+backdrop_path :
       'https://via.placeholder.com/500x281.png?text=no+image'; //gestion d'une image bidon si le serveur nous en retourne pas
   }
 
-  getNextMoviesOnAction() {
+  getNextMoviesOnAction() : void{
     this.movieSvc.getNextMoviesFromApi();
   }
 
