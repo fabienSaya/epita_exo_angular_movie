@@ -6,7 +6,7 @@ import { ListComponent } from './list/list.component';
 /* on définit les routes de l'application*/
 const routes: Routes = [
   {path: '',component: ListComponent},//root
-  {path: 'details',component: DetailComponent},
+  {path: 'details/:id',component: DetailComponent},
 ];
 
 @NgModule({

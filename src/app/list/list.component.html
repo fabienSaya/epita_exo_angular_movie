@@ -2,7 +2,7 @@
   <div *ngFor="let movie of movies;let i=index" class="col-12 col-lg-2">
     <!-- CARD -->
     <!-- router link sert pour le routage-->
-    <div routerLink="details" class="card">
+    <div [routerLink]="['details',movie.id]" class="card">
       <img [src]="getImageUrl(movie.image)" alt="">
       <div  class="card-body">
         <h2 >{{movie.titre}}</h2>
