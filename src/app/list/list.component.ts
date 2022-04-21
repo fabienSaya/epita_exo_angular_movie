@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { MovieModel } from '../models/movie.model';
-import { MovieService } from '../services/movie.service';
+import { MovieModel } from '../shared/models/movie.model';
+import { MovieService } from '../shared/services/movie.service';
 
 
 @Component({

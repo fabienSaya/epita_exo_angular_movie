@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MovieModel } from '../models/movie.model';
-import { MovieService } from '../services/movie.service';
+import { MovieModel } from '../shared/models/movie.model';
+import { MovieService } from '../shared/services/movie.service';
 
 @Component({
   selector: 'app-searchbar',
