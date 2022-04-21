@@ -61,6 +61,8 @@ export class DetailComponent implements OnInit {
         }
       )
     )
+
+    console.log(this.movieSvc.movie$)
   }
 
   getVideoUrl(videoKey:string) {
