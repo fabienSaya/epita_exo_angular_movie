@@ -45,6 +45,9 @@ export class ListComponent implements OnInit {
       }
     })
 
+    //on réinitialise la liste de recherche à chaque fois
+    this.movieSvc.resetfoundMovies$();
+
   }
 
   getImageUrl(backdrop_path:string | null ): string {

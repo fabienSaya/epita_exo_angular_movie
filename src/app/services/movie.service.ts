@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -34,6 +34,8 @@ export class MovieService {
 
   private _movie$:BehaviorSubject<MovieModel> = new BehaviorSubject<MovieModel>(null!)
 
+  private _foundMovies$:BehaviorSubject<MovieModel[]> = new BehaviorSubject<MovieModel[]>([])
+
 
 
   /* injection d'un objet http de la classe HttpClient */
@@ -47,6 +49,27 @@ export class MovieService {
   public set movies$(movies:any)  {
     this._movies$.next(movies);
   }
+
+  setMovie(movie:MovieModel) {
+    this._movie$.next(movie)
+  }
+
+  get movie$() {
+    return this._movie$.asObservable();
+  }
+
+  public get foundMovies$() : Observable<any>  {
+    return this._foundMovies$.asObservable();
+  }
+
+  public set foundMovies$(movies:any)  {
+    this._foundMovies$.next(movies);
+  }
+
+  public resetfoundMovies$()  {
+    this._foundMovies$.next([]);
+  }
+
 
   /* on retourne juste l'objet observable et non l'objet movies pour que l'observable soit
   du coté du composant qui gère la donnée, ce qui permet de le rendre reactive (comme ca si la liste de movie
@@ -108,6 +131,7 @@ export class MovieService {
   }
 
   public getMovieFromApi(movieId:number) {
+    console.log("appel getMovieFromApi avec id= ", movieId)
     this.http.get(this._TMDB_API_URL +'/movie/'+movieId+'?api_key='+this._TMDB_API_KEY+'&language=fr')
     .pipe(
        // avec l'opérateur map de RxJS,
@@ -125,12 +149,49 @@ export class MovieService {
 
   }
 
+  public searchMoviesFromApi(searchMovieStr:string) {
 
-  setMovie(movie:MovieModel) {
-    this._movie$.next(movie)
+    if (searchMovieStr.trim().length>0) {
+      let endPoint ='/search/movie';
+      //let queryString='?api_key='+this._TMDB_API_KEY+'&language=fr&query='+searchMovie;
+
+      let parametres=new HttpParams()
+        .set('api_key',this._TMDB_API_KEY)
+        .set('language','fr')
+        .set('query',searchMovieStr)
+        ;
+      //on peut aussi l'écrire comme ca
+      // let params=new HttpParams();
+      // params=params.append('api_key',this._TMDB_API_KEY);
+      // params=params.append('language','fr');
+      // params=params.append('query',searchMovie);
+
+      let url=this._TMDB_API_URL +endPoint;
+
+      //console.log(url)
+      //console.log(this.http.get(url,{params}))
+
+      this.http.get(url,{params:parametres})
+      //.subscribe(response => console.log(response))
+      .pipe(
+        map( (apiResponse:any) =>
+          apiResponse.results.map((movieFromApi:any) => new MovieModel(movieFromApi))
+        )
+      ) // fin pipe() retourne un Observable
+      .subscribe(
+        (response:MovieModel[]) => {
+          //console.log("search results= ",response)
+          this._foundMovies$.next(response)
+        }
+      )
+    } else {
+      this._foundMovies$.next([])
+    }
+
   }
 
-  get movie$() {
-    return this._movie$.asObservable();
-  }
+
+
+
+
 }

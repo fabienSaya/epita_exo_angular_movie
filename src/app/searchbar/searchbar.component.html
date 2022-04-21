@@ -1,1 +1,16 @@
-<input type="text" class="form-control" placeholder="Rechercher des films...">
+<!-- on peut mettre ce qu'on veut à la place de #userInput. je pourrais mettre #search , #searchInput, ...
+  c'est juste un nomage de variable permis par angular pour référencer la balise que l'on va pouvoir utiliser-->
+<input #userInput
+    (keyup)="searchMoviesAction(userInput.value)"
+    type="text" class="form-control" placeholder="Rechercher des films...">
+
+  <!--<ul *ngIf="foundMovies">-->
+  <ul>
+    <li  *ngFor="let movie of movieSvc.foundMovies$ | async" [routerLink]="['details',movie.id]">
+      {{movie.titre}}
+    </li>
+    <!--<option data-tokens="ketchup mustard">Hot Dog, Fries and a Soda</option>-->
+  </ul>
+
+
+<!--<pre>{{foundMovies|json}}</pre>-->

@@ -28,6 +28,8 @@ export class DetailComponent implements OnInit {
     //console.log(this.activatedRoute.snapshot.params)
     this.movieId= this.activatedRoute.snapshot.params['id'];
 
+  console.log("detail du movie: ",this.movieId)
+
     //on met dans un tableau toutes nos souscription pour pouvoir les détruire à la fin
     this.subscriptions.push(
       //on va récupérer la vidéo
@@ -53,11 +55,16 @@ export class DetailComponent implements OnInit {
 
 
         // gestion du le cas où on accede directement au movie sans passer par la liste. Dans ce cas, data est vide, il faut donc faire la requete à movie
-          this.movieSvc.movie$.subscribe(
+      this.movieSvc.movie$.subscribe(
         (data:MovieModel) => {
-          if(data == undefined  || data == null) {
+          if(data == undefined  || data == null || data.id!=this.movieId) {
+            console.log("movie pas chargé donc on charge movie id= ",this.movieId)
             this.movieSvc.getMovieFromApi(this.movieId);
+          } else {
+            console.log("movie déja chargé, data= ",data)
+            console.log("movie déja chargé, id= ",this.movieId)
           }
+
         }
       )
     )

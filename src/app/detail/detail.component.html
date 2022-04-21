@@ -33,6 +33,7 @@
         [src]="getVideoUrl(movieVideo.key)"
         frameborder="0"
         allowfullscreen></iframe>
+      <p *ngIf="!movieVideo">Pas de bande annonce disponible</p>
     </div>
   </div>
 </div>
