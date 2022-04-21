@@ -11,6 +11,7 @@
       <img [src]="getImageUrl(movie.image)" alt="">
       <div  class="card-body">
         <h2 >{{movie.titre}}</h2>
+        <app-stars [score]="movie.score" scoreMax="10"></app-stars>
       </div>
     </div>
     <!-- <pre>{{movie|json}}</pre> -->

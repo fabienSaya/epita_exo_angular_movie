@@ -22,7 +22,7 @@
       </div>
       <p>Résumé: {{movie.description}}</p>
       <p>Date de sortie: {{movie.date | date:'dd/MM/YYYY'}}</p>
-      <p>Score: {{movie.score}}</p>
+      <p>Score: <app-stars [score]="movie.score" scoreMax="10"></app-stars></p>
     </div>
   </div>
 
