@@ -16,7 +16,7 @@ export class DetailComponent implements OnInit {
   movieVideo:any;
   //movie:any;
 
-  subscription:Subscription = new Subscription();
+  subscriptions:Subscription[] =[];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -28,37 +28,38 @@ export class DetailComponent implements OnInit {
     //console.log(this.activatedRoute.snapshot.params)
     this.movieId= this.activatedRoute.snapshot.params['id'];
 
-    //on va récupérer la vidéo
-    this.movieSvc.getVideosOfMovie(this.movieId)
-      //on exécute la requete avec subscribe et dedans on indique ce qu'on fait de la reponse
-      .subscribe(
-          response => {
-            //console.log(response)
-            //on récupère la 1ere video de la liste qui est une video youtube
-            this.movieVideo=response.results.find((el:any) => el.site=='YouTube')
-            console.log("1ere video Youtube du movie: ",this.movieVideo);
+    //on met dans un tableau toutes nos souscription pour pouvoir les détruire à la fin
+    this.subscriptions.push(
+      //on va récupérer la vidéo
+      this.movieSvc.getVideosOfMovie(this.movieId)
+        //on exécute la requete avec subscribe et dedans on indique ce qu'on fait de la reponse
+        .subscribe(
+            response => {
+              //console.log(response)
+              //on récupère la 1ere video de la liste qui est une video youtube
+              this.movieVideo=response.results.find((el:any) => el.site=='YouTube')
+              console.log("1ere video Youtube du movie: ",this.movieVideo);
+            }
+          ),
+
+
+        // on ne fait plus le subscribe dans le ts, mais directement dans la vue. Plus besoin de ca
+        //on subscribe au movie$ pour avoir le movie
+        // this.subscription = this.movieSvc.movie$.subscribe(data => {
+        //     console.log('movie selectionné: ',data)
+        //     this.movie=data
+        //   }
+        // )
+
+
+        // gestion du le cas où on accede directement au movie sans passer par la liste. Dans ce cas, data est vide, il faut donc faire la requete à movie
+          this.movieSvc.movie$.subscribe(
+        (data:MovieModel) => {
+          if(data == undefined  || data == null) {
+            this.movieSvc.getMovieFromApi(this.movieId);
           }
-        );
-
-
-
-
-    // on ne fait plus le subscribe dans le ts, mais directement dans la vue. Plus besoin de ca
-    //on subscribe au movie$ pour avoir le movie
-    // this.subscription = this.movieSvc.movie$.subscribe(data => {
-    //     console.log('movie selectionné: ',data)
-    //     this.movie=data
-    //   }
-    // )
-
-
-      // gestion du le cas où on accede directement au movie sans passer par la liste. Dans ce cas, data est vide, il faut donc faire la requete à movie
-       this.subscription =  this.movieSvc.movie$.subscribe(
-      (data:MovieModel) => {
-        if(data == undefined  || data == null) {
-          this.movieSvc.getMovieFromApi(this.movieId);
         }
-      }
+      )
     )
   }
 
@@ -68,8 +69,14 @@ export class DetailComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  //on ne le fait plus dans le ts, mais directement dans la vue. Plus besoin de ca
+
   ngOnDestroy() {
-    // this.subscription.unsubscribe()
+    //on détruit nos subscriptions (2 manières d'écrire)
+    this.subscriptions.forEach(sub => sub.unsubscribe())
+
+    /*for(let sub of this.subscriptions) {
+      sub.unsubscribe()
+    }*/
+
   }
 }
