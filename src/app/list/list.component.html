@@ -1,3 +1,8 @@
+<h1>Les films à l'affiche</h1>
+<!-- <app-searchbar> -->
+<app-searchbar></app-searchbar>
+
+
 <div class="row pb-5">
   <div *ngFor="let movie of movieSvc.movies$ | async;let i=index" class="col-12 col-lg-2">
     <!-- CARD -->

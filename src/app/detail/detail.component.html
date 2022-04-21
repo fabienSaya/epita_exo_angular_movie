@@ -1,23 +1,39 @@
-<!--<pre>{{movieVideo|json}}</pre>-->
 
-<!-- le *ngIf permet nous assurer qu'on a bien l'objet avant d'afficher. Si on le met pas il essaye d'afficher
-avant qu'on ait récupéré movieVideo et on a des erreurs sur l'utilisation des propriétés
+<div class="row">
+  <!--information film-->
+  <div class="col-12 col-md-6">
+    <!--<pre>{{movieVideo|json}}</pre>-->
+    <!-- le *ngIf permet nous assurer qu'on a bien l'objet avant d'afficher. Si on le met pas il essaye d'afficher
+      avant qu'on ait récupéré movieVideo et on a des erreurs sur l'utilisation des propriétés
 
-- on épure un peu ce qu'on a récupéré de la génération d'iframe par youtube.
-- Sur l'iframe on applique le ratio 16/9 de la taille récupérée depuis l'api
-- et on met l'iframe dans un container sur lequel on applique un css récupéré sur internet
-   pour que ca occupe toute la largeur et que ce soit responsive .
--->
+      - on épure un peu ce qu'on a récupéré de la génération d'iframe par youtube.
+      - Sur l'iframe on applique le ratio 16/9 de la taille récupérée depuis l'api
+      - et on met l'iframe dans un container sur lequel on applique un css récupéré sur internet
+        pour que ca occupe toute la largeur et que ce soit responsive .
+      -->
+    <div *ngIf="movieSvc.movie$ | async as movie">
+      <div class="d-flex"> <!-- pour que le bouton et le titre soit sur une seule ligne car sinon h1 est en display block donc ca s'affiche sur 2 lignes-->
+        <!--on formate le bouton avec les classes bootstrap. On ajoute aussi une marge à droite-->
+        <!-- on utilise le router link angular pour dire que si on clic dessus on revient à la page root (donc liste)-->
+        <button routerLink="/" class="btn btn-dark me-3">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <h1>{{movie.titre | uppercase}}</h1>
+      </div>
+      <p>Résumé: {{movie.description}}</p>
+      <p>Date de sortie: {{movie.date | date:'dd/MM/YYYY'}}</p>
+      <p>Score: {{movie.score}}</p>
+    </div>
+  </div>
 
-<div class="video-container">
-  <iframe *ngIf="movieVideo" [width]="16/9*movieVideo.size" [height]="movieVideo.size"
-    [src]="getVideoUrl(movieVideo.key)"
-    frameborder="0"
-    allowfullscreen></iframe>
+  <!-- video-->
+  <div class="col-12 col-md-6">
+    <div class="video-container">
+      <iframe *ngIf="movieVideo" [width]="16/9*movieVideo.size" [height]="movieVideo.size"
+        [src]="getVideoUrl(movieVideo.key)"
+        frameborder="0"
+        allowfullscreen></iframe>
+    </div>
+  </div>
 </div>
 
-<div *ngIf="movieSvc.movie$ | async as movie">
-  <h1>{{movie.titre | uppercase}}</h1>
-  <p>{{movie.description}}</p>
-  <p>{{movie.date | date:'dd/MM/YYYY'}}</p>
-</div>
