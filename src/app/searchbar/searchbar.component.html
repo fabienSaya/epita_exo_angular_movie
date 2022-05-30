@@ -6,7 +6,9 @@
 
   <!--<ul *ngIf="foundMovies">-->
   <ul>
-    <li  *ngFor="let movie of movieSvc.foundMovies$ | async" [routerLink]="['details',movie.id]">
+    <!--<li  *ngFor="let movie of movieSvc.foundMovies$ | async" [routerLink]="['details',movie.id]">-->
+    <!-- on utilise maintenant la liste du composant plutot que celle du service car on s'est abonné à celle du service et on a lié notre liste du ts à celle du service via le subscribe dans searchMoviesAction -->
+    <li [routerLink]="['details',movie.id]" *ngFor="let movie of foundMovies " >
       {{movie.titre}}
     </li>
     <!--<option data-tokens="ketchup mustard">Hot Dog, Fries and a Soda</option>-->
